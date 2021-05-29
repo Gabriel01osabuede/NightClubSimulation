@@ -1,30 +1,16 @@
 using System;
-using System.Collections.Generic;
 
 namespace NightClub
 {
-    public class Customer : Person
+    public class RegularOrder : Order
     {
-        public int Age { get; set; }
-        public bool IsOutfitComplete { get; set; }
-        public bool HasTicket { get; set; }
-
-        public Customer(string name, int age, bool isOutfitComplete, bool hasTicket)
-        {
-            Name = name;
-            Age = age;
-            IsOutfitComplete = isOutfitComplete;
-            HasTicket = hasTicket;
-        }
-
-        public static void MakeOrder()
+        public override void MakeOrder()
         {
             Console.Clear();
             Attendant.ShowMenu();
             Console.WriteLine("How many drinks would u like to order");
             string choice = Console.ReadLine();
             int validateChoice = Validation.ValidateAllIntInput(choice);
-            // choice--;
 
             Console.WriteLine("select 1,2,3 or 4 to make your order.");
             for (int i = 1; i <= validateChoice; i++)
@@ -40,24 +26,20 @@ namespace NightClub
             string validateReply = Validation.IsStringYesOrNo(reply);
             if (validateReply == "yes")
             {
+                Dj.GetCurrentMusic();
+                Console.WriteLine();
                 Paybill();
                 Console.ReadKey();
-
             }
             else if (validateReply == "no")
             {
                 MakeOrder();
             }
-
         }
-        public static void Paybill()
-        {
-            Attendant.PresentBillToCustomer();
 
-            //calls the method presentBillToCustomer()
-            //Then picks the variable total cost from that method 
-            //then sets the the amount to be paid 
-            //and process finalizing..to exit.
+        public override void Paybill()
+        {
+           Attendant.PresentBillToCustomer();
         }
     }
 }

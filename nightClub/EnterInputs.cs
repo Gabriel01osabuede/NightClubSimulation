@@ -4,7 +4,8 @@ namespace NightClub
 {
     public class EnterInputs
     {
-        public static void VerifyIfStaffOrCustomer()
+        Bouncer bouncer = new Bouncer();
+        public void VerifyIfStaffOrCustomer()
         {
 
             bool programStarts = true;
@@ -22,12 +23,14 @@ namespace NightClub
                         AcceptUserInput();
                         break;
                     case "staff":
+                        Dj.GetCurrentMusic();
+                        Console.WriteLine();
                         Console.WriteLine("Enter your NAME: ");
                         string staffName = Console.ReadLine().ToUpper();
                         string validateStaffName = Validation.ValidateAllStringInput(staffName);
 
                         Console.WriteLine("Enter your STAFF ID: ");
-                        string staffId = Console.ReadLine().ToUpper();
+                        string staffId = "STF"+Console.ReadLine().ToUpper();
                         Staff id = new Staff(validateStaffName, staffId);
 
                         switch (id.StaffId)
@@ -52,31 +55,64 @@ namespace NightClub
 
         }
 
-        public static void AcceptUserInput()
+        public void AcceptUserInput()
         {
+            RegularCustomer customer = new RegularCustomer();
+
             Console.Clear();
+            Dj.GetCurrentMusic();
+            Console.WriteLine();
             Console.WriteLine("Welcome To The Night Club..\nPlease Provide Your details.");
             Console.WriteLine("Full Name");
             string name = Console.ReadLine();
             string validateName = Validation.ValidateAllStringInput(name);
+            customer.Name = validateName;
 
             Console.WriteLine("Your Age");
             string age = Console.ReadLine();
             int validateAge = Validation.ValidateAllIntInput(age);
+            customer.Age = validateAge;
 
             Console.WriteLine("Are you wearing the complete outfit?\nYes or No");
             string responseForCompleteOutfit = Console.ReadLine().ToLower();
             string validateResponseForCompleteOutfit = Validation.IsStringYesOrNo(responseForCompleteOutfit);
             bool checkIfOutfitComplete = Validation.IsItYesOrNo(validateResponseForCompleteOutfit);
+            customer.IsOutfitComplete = checkIfOutfitComplete;
 
             Console.WriteLine("Do you have a ticket?\nYes or No");
             string responseForTicket = Console.ReadLine().ToLower();
             string validateResponseForTicket = Validation.IsStringYesOrNo(responseForTicket);
             bool checkHasTicket = Validation.IsItYesOrNo(validateResponseForTicket);
+            customer.HasTicket = checkHasTicket;
 
-            Customer customer = new Customer(validateName, validateAge, checkIfOutfitComplete, checkHasTicket);
+            if (checkHasTicket == true)
+            {
+                Console.WriteLine("Ticket Type?\nV for VIP or R for REGULAR");
+                string responseForTicketType = Console.ReadLine().ToLower();
+                string validateResponseForTcketType = Validation.CheckForVipOrRegular(responseForTicketType);
 
-            Bouncer.GetBouncerCheckResult(customer.Name, customer.Age, customer.IsOutfitComplete, customer.HasTicket);
+                VipCustomer vipCustomer = new VipCustomer(validateName, validateAge, checkIfOutfitComplete, checkHasTicket, validateResponseForTcketType);
+                RegularCustomer regCustomer = new RegularCustomer(validateName, validateAge, checkIfOutfitComplete, checkHasTicket);
+                if (validateResponseForTcketType == "v")
+                {
+                    bouncer.GetBouncerForVipCheck(vipCustomer.Name, vipCustomer.Age, vipCustomer.IsOutfitComplete, vipCustomer.HasTicket, vipCustomer.TicketType);
+                }
+                else if(validateResponseForTcketType == "r")
+                {
+                    bouncer.GetBouncerCheckResult (regCustomer.Name, regCustomer.Age, regCustomer.IsOutfitComplete, regCustomer.HasTicket);
+                }
+               
+            }
+            else if(checkHasTicket == false)
+            {
+                bouncer.GetBouncerCheckResult(customer.Name, customer.Age, customer.IsOutfitComplete, customer.HasTicket);
+            }
+            
+            
+                
+            
+            
+            
 
         }
     }
